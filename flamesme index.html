@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>FLAMES Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #f70f0f;
+    }
+    .container {
+      background: #fff;
+      padding: 40px 35px;
+      border-radius: 20px;
+      box-shadow: 0 14px 27px rgba(250, 247, 248, 0.918);
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+    .container:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 35px rgba(250, 244, 247, 0.89);
+    }
+    h2 {
+      margin-bottom: 24px;
+      font-weight: 600;
+      font-size: 2.2em;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      background: linear-gradient(90deg, #ff6a9e, #ff99c8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    label {
+      display: block;
+      margin: 15px 0 6px 0;
+      font-weight: 600;
+      font-size: 1em;
+      color: #7a4963;
+      text-align: left;
+    }
+    input[type=text] {
+      width: 100%;
+      padding: 12px 15px;
+      font-size: 1em;
+      border: 2px solid #ff7baa;
+      border-radius: 12px;
+      outline: none;
+      box-sizing: border-box;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    input[type=text]:focus {
+      border-color: #ff3b8d;
+      box-shadow: 0 0 8px #ff3b8d;
+    }
+    button {
+      margin-top: 30px;
+      width: 100%;
+      background: linear-gradient(135deg, #ff3b8d, #ff6aa6);
+      border: none;
+      padding: 15px 0;
+      font-size: 1.2em;
+      color: white;
+      font-weight: 700;
+      border-radius: 15px;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(255, 59, 141, 0.6);
+      transition: background 0.4s ease, transform 0.2s ease;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+    }
+    button:hover {
+      background: linear-gradient(135deg, #ff6aa6, #ff3b8d);
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px rgba(255, 59, 141, 0.8);
+    }
+    .result {
+      margin-top: 38px;
+      background: #ffe6f2;
+      color: #b30057;
+      border-radius: 12px;
+      padding: 28px 22px;
+      font-size: 1.25em;
+      min-height: 60px;
+      box-shadow: inset 0 0 10px #ffaadf91;
+      font-weight: 700;
+      transition: all 0.4s ease;
+    }
+    small {
+      display: block;
+      margin-top: 24px;
+      color: #b4637a;
+      font-size: 0.85em;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>FLAMES Calculator</h2>
+    <form id="flamesForm" method="POST" action="https://formspree.io/f/mnnzjaon" style="margin-bottom:0;">
+      <label for="yourname">Your Name:</label>
+      <input type="text" id="yourname" name="your_name" required>
+      <label for="crushname">Your Crush's Name:</label>
+      <input type="text" id="crushname" name="crush_name" required>
+      <button type="submit">Check FLAMES</button>
+    </form>
+    <div class="result" id="flamesResult"></div>
+    <small> Thank you </small>
+  </div>
+  <script>
+    function flamesResult(name1, name2) {
+      const flames = ['Friends', 'Love', 'Affection', 'Marriage', 'Enemy', 'Siblings'];
+      const total = (name1 + name2).replace(/[^a-z]/gi,'').length;
+      return flames[total % flames.length];
+    }
+
+    document.getElementById('flamesForm').onsubmit = function(e) {
+      e.preventDefault();
+      const yourName = document.getElementById('yourname').value.trim();
+      const crushName = document.getElementById('crushname').value.trim();
+      document.getElementById('flamesResult').innerHTML = 
+        `<b>Your FLAMES result: <br>${flamesResult(yourName,crushName)}</b>`;
+      fetch(this.action, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: new FormData(this)
+      });
+      this.reset();
+      setTimeout(() => document.getElementById('flamesResult').innerHTML = "", 10000);
+    };
+  </script>
+</body>
+</html>
