@@ -2,143 +2,287 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>FLAMES Calculator</title>
+  <title>Love Finder - Professional Edition</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
     body {
+      min-height: 100vh;
       margin: 0;
-      padding: 0;
+      background:
+        radial-gradient(ellipse at 0 0, #f84e0b65 0%, transparent 60%),
+        radial-gradient(ellipse at 100% 0, #f0bbffa0 0%, transparent 60%),
+        linear-gradient(135deg, #fc6603 0%, #d89820 100%);
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      color: #f70f0f;
+      color: #23435d;
+      display: flex; align-items: center; justify-content: center;
+      overflow-x: hidden;
     }
+
+    .glow-border {
+      position: fixed; pointer-events: none; z-index:0;
+      inset: -40px;
+      border-radius: 32px;
+      box-shadow:
+        0 0 120px 40px #90cdf4aa,
+        0 0 70px 15px #bbf7d0aa,
+        0 0 280px 80px #818cf8aa;
+      filter: blur(1px);
+      animation: glowmove 7s ease-in-out infinite alternate;
+      opacity: 0.93;
+    }
+    @keyframes glowmove {
+      0% { box-shadow:
+        0 0 120px 40px #90cdf4aa,
+        0 0 70px 15px #bbf7d0aa,
+        0 0 280px 80px #818cf8aa;}
+      100% { box-shadow:
+        0 0 120px 80px #818cf8cc,
+        0 0 56px 22px #a7f3d080,
+        0 0 350px 120px #fde68a66;}
+    }
+
+
     .container {
-      background: #fff;
-      padding: 40px 35px;
-      border-radius: 20px;
-      box-shadow: 0 14px 27px rgba(250, 247, 248, 0.918);
-      max-width: 400px;
-      width: 90%;
+      background: #65f703;
+      border-radius: 27px;
+      box-shadow: 0 10px 48px 6px #1e244a2e, 0 1px 3px 0 #9af9ec18;
+      max-width: 440px;
+      width: 98%;
+      padding: 40px 26px;
       text-align: center;
-      transition: transform 0.3s ease;
+      margin: 40px 0;
+      position: relative;
+      z-index:1;
+      transition: box-shadow 0.34s;
+      border: 1px solid #fdfafa;
     }
     .container:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 20px 35px rgba(250, 244, 247, 0.89);
+      box-shadow: 0 18px 64px 6px #963b5228, 0 4px 16px #ef05f736;
     }
     h2 {
-      margin-bottom: 24px;
-      font-weight: 600;
-      font-size: 2.2em;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      background: linear-gradient(90deg, #ff6a9e, #ff99c8);
+      background: linear-gradient(110deg, #60697a 48%, #38bdf8 108%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      font-size: 2.16em;
+      font-weight: 700;
+      margin-bottom: 16px;
+      letter-spacing: 2px;
     }
     label {
-      display: block;
-      margin: 15px 0 6px 0;
-      font-weight: 600;
-      font-size: 1em;
-      color: #7a4963;
       text-align: left;
+      display: block;
+      margin: 18px 0 4px 0;
+      font-weight: 600;
+      color: #2563eb;
+      letter-spacing: 0.2px;
+      font-size: 1.01em;
+      transition: color 0.2s;
     }
-    input[type=text] {
+    input[type="text"], input[type="date"] {
       width: 100%;
-      padding: 12px 15px;
+      padding: 12px 11px;
       font-size: 1em;
-      border: 2px solid #ff7baa;
-      border-radius: 12px;
+      background: #f8fafc;
+      border: 2.5px solid #bae6fd;
+      border-radius: 9px;
       outline: none;
+      margin-bottom: 8px;
+      margin-top: 3px;
       box-sizing: border-box;
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      transition: border 0.18s, background 0.2s, box-shadow 0.28s;
     }
-    input[type=text]:focus {
-      border-color: #ff3b8d;
-      box-shadow: 0 0 8px #ff3b8d;
+    input[type="text"]:focus, input[type="date"]:focus {
+      border-color: #2563eb;
+      background: #f1f5fb;
+      box-shadow: 0 0 12px #bae6fd66;
+    }
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: hue-rotate(190deg) saturate(1.2);
+      opacity: 0.75;
+      cursor:pointer;
     }
     button {
-      margin-top: 30px;
+      margin-top: 23px;
       width: 100%;
-      background: linear-gradient(135deg, #ff3b8d, #ff6aa6);
-      border: none;
-      padding: 15px 0;
-      font-size: 1.2em;
-      color: white;
+      font-size: 1.19em;
       font-weight: 700;
+      text-transform:uppercase;
+      letter-spacing:1.3px;
+      border:none;
       border-radius: 15px;
-      cursor: pointer;
-      box-shadow: 0 6px 20px rgba(255, 59, 141, 0.6);
-      transition: background 0.4s ease, transform 0.2s ease;
-      text-transform: uppercase;
-      letter-spacing: 1.2px;
+      padding: 15px 0;
+      background: linear-gradient(94deg,#2563eb 10%, #38bdf8 94%);
+      color: #fff;
+      box-shadow: 0 7px 32px #60a5fa36;
+      transition: background 0.25s, box-shadow 0.18s, transform 0.12s;
+      cursor:pointer;
+      position: relative;
+      z-index:1;
+      overflow:hidden;
     }
-    button:hover {
-      background: linear-gradient(135deg, #ff6aa6, #ff3b8d);
-      transform: translateY(-4px);
-      box-shadow: 0 10px 25px rgba(255, 59, 141, 0.8);
+    button::after {
+      content:''; position:absolute; inset:0; border-radius:15px; background:
+        radial-gradient(ellipse at 60% 40%,#dbeafe33 0%,transparent 72%);
+      opacity:0; transition:opacity 0.28s;
+      pointer-events:none;
+      z-index:0;
     }
+    button:hover, button:focus {
+      background: linear-gradient(94deg,#38bdf8 10%, #2563eb 90%);
+      box-shadow: 0 11px 28px #2563eb22;
+      transform: scale(1.024);
+    }
+    button:hover::after, button:active::after { opacity:0.40; }
+
     .result {
-      margin-top: 38px;
-      background: #ffe6f2;
-      color: #b30057;
-      border-radius: 12px;
-      padding: 28px 22px;
-      font-size: 1.25em;
-      min-height: 60px;
-      box-shadow: inset 0 0 10px #ffaadf91;
-      font-weight: 700;
-      transition: all 0.4s ease;
+      margin-top:36px;
+      background: linear-gradient(120deg, #f0f9ff 15%, #fff5fa 80%);
+      border-radius: 18px;
+      border: 1.2px solid #bae6fd;
+      box-shadow: 0 4px 24px #38bdf815, 0 1px 7px #bae6fd38;
+      color: #2563eb;
+      padding: 29px 18px 22px 18px;
+      font-size: 1.19em;
+      min-height: 55px;
+      font-weight: 600;
+      line-height: 1.75em;
+      transition: box-shadow 0.34s, color 0.24s;
+      animation: resfade 0.75s cubic-bezier(0.17,0.67,0.67,1.01);
+      border-bottom: 5px solid #38bdf8bb;
+      word-break: break-word;
+    }
+    @keyframes resfade {
+      from{ opacity:0; transform:scale(0.98) translateY(20px);}
+      to{ opacity:1; transform:scale(1) translateY(0);}
+    }
+    .result b { color:#0ea5e9; }
+    .result i { color:#64748b; font-size:0.97em;}
+    .result hr {
+      border:0; height:0.7px; background:#c7e0fb; margin:23px auto 14px auto; width:95%;
+      opacity:0.7;
     }
     small {
-      display: block;
-      margin-top: 24px;
-      color: #b4637a;
-      font-size: 0.85em;
-      font-style: italic;
+      color:#64748b;
+      display:block;
+      margin-top:26px;
+      font-size:0.98em;
+      line-height:1.62em;
+    }
+
+    /* Responsive */
+    @media (max-width:600px){
+      .container{max-width:99vw; padding:20px 4vw;}
+      .result{padding:18px 6vw;}
     }
   </style>
 </head>
 <body>
+  <div class="glow-border"></div>
   <div class="container">
-    <h2>FLAMES Calculator</h2>
-    <form id="flamesForm" method="POST" action="https://formspree.io/f/mnnzjaon" style="margin-bottom:0;">
-      <label for="yourname">Your Name:</label>
-      <input type="text" id="yourname" name="your_name" required>
-      <label for="crushname">Your Crush's Name:</label>
-      <input type="text" id="crushname" name="crush_name" required>
-      <button type="submit">Check FLAMES</button>
+    <h2>Love Finder</h2>
+    <form id="loveForm" autocomplete="off">
+      <label>your name:</label>
+      <input type="text" name="your_name" id="yourName" required placeholder="Ungaloda name inga type pannunga">
+
+      <label>crush name :</label>
+      <input type="text" name="crush_name" id="crushName" required placeholder="Avaloda name inga type pannunga">
+
+      <label>crush date of birth:</label>
+      <input type="date" name="crush_dob" id="crushDOB" required>
+
+      <label>Neenga rendu perum first meet panna date:</label>
+      <input type="date" name="first_meet_date" id="meetDate" required>
+
+      <label>First meet location:</label>
+      <input type="text" name="first_meet_location" id="meetLocation" required placeholder="Eg: College, park, insta, bus etc.">
+
+      <label>ungaluku avangala pathi romba pidikkura vishayam:</label>
+      <input type="text" name="most_liked" id="mostLiked" required placeholder="eg: Smile, pesara style, caring etc">
+
+      <label>Epdi propose panninga or idea :</label>
+      <input type="text" name="proposal" id="proposal" required placeholder="One sweet plan/idea sollunga">
+
+      <button type="submit">Test Your love</button>
     </form>
-    <div class="result" id="flamesResult"></div>
-    <small> Thank you </small>
+    <div class="result" id="loveResult" style="display:none;"></div>
+    <small>
+      ** share your feedback if you seen any bugs **
+    </small>
   </div>
   <script>
-    function flamesResult(name1, name2) {
-      const flames = ['Friends', 'Love', 'Affection', 'Marriage', 'Enemy', 'Siblings'];
-      const total = (name1 + name2).replace(/[^a-z]/gi,'').length;
-      return flames[total % flames.length];
-    }
+     // Firebase config (same as your code)
+    const firebaseConfig = {
+      apiKey: "AIzaSyD2IwBzul9y7T9D2vv-ErGE-Kge7hDxtzY",
+      authDomain: "love-finder-app-cc4bf.firebaseapp.com",
+      databaseURL: "https://love-finder-app-cc4bf-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "love-finder-app-cc4bf",
+      storageBucket: "love-finder-app-cda6f.appspot.com",
+      messagingSenderId: "186674094487",
+      appId: "1:186674094487:web:90d3f27d0d361edd2de4d2"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-    document.getElementById('flamesForm').onsubmit = function(e) {
+    // Universe/fun message
+    function universeMessage(yourName, crushName) {
+      const funMessages = [
+        "Nambikkai irundha, kadhal la ellam possible!",
+        "Open ah pesina misunderstandings illa, kaadhal full on!",
+        "Unique pair ku only positive vibes dhan.",
+        "Nee heart ah follow pannina, future nalla colourful!",
+        "Sweet surprise-le start pannunga. Kadhal unga side."
+      ];
+      const pick = funMessages[Math.floor(Math.random() * funMessages.length)];
+      return `${yourName} & ${crushName}: <br><i>${pick}</i>`;
+    }
+    function randomPercent(min, max){ return Math.floor(Math.random()*(max-min+1))+min; }
+
+    document.getElementById('loveForm').onsubmit = function(e){
       e.preventDefault();
-      const yourName = document.getElementById('yourname').value.trim();
-      const crushName = document.getElementById('crushname').value.trim();
-      document.getElementById('flamesResult').innerHTML = 
-        `<b>Your FLAMES result: <br>${flamesResult(yourName,crushName)}</b>`;
-      fetch(this.action, {
-        method: 'POST',
-        headers: { 'Accept': 'application/json' },
-        body: new FormData(this)
+      const yourName = document.getElementById('yourName').value.trim();
+      const crushName = document.getElementById('crushName').value.trim();
+      const crushDOB = document.getElementById('crushDOB').value;
+      const meetDate = document.getElementById('meetDate').value;
+      const meetLocation = document.getElementById('meetLocation').value.trim();
+      const mostLiked = document.getElementById('mostLiked').value.trim();
+      const proposal = document.getElementById('proposal').value.trim();
+
+      const connection = ["Royal Friendship 👑", "Super Romantic 💖", "Cute Pair 🫰", "Mass Set 🥰"];
+      const trust = randomPercent(70,99);
+      const chemistry = ["Double Strong 💥", "Sweet ah irukku!", "Instant connect 🔗", "Nalla vibes 😍"];
+      const connectionTxt = connection[Math.floor(Math.random()*connection.length)];
+      const chemistryTxt = chemistry[Math.floor(Math.random()*chemistry.length)];
+
+      document.getElementById('loveResult').innerHTML = `
+        <span style="font-size:1.09em;">💑 <b>${yourName} & ${crushName} oda Love Result</b> 💑</span><br><br>
+        <b>First meet:</b> ${meetDate} - ${meetLocation}<br>
+        <b>Avala Date of Birth:</b> ${crushDOB}<br>
+        <b>Nee avala pathi pidikkura vishayam:</b> ${mostLiked} <br>
+        <b>Proposal plan:</b> ${proposal} <br>
+        <b>Love Connection:</b> ${connectionTxt} <br>
+        <b>Trust Level:</b> ${trust}% <br>
+        <b>Chemistry:</b> ${chemistryTxt} <br>
+        <hr>
+        <b>Universe Advice:</b><br>
+        ${universeMessage(yourName, crushName)}
+      `;
+      document.getElementById('loveResult').style.display = "block";
+      // Firebase-ku data store pannu
+      db.ref('submissions/').push({
+        user_name: yourName,
+        crush_name: crushName,
+        crush_dob: crushDOB,
+        first_meet_date: meetDate,
+        first_meet_location: meetLocation,
+        most_liked: mostLiked,
+        proposal: proposal
       });
       this.reset();
-      setTimeout(() => document.getElementById('flamesResult').innerHTML = "", 10000);
-    };
+      setTimeout(() => document.getElementById('loveResult').style.display = "none", 20000);
+    }
   </script>
 </body>
 </html>
